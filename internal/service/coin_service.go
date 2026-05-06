@@ -54,16 +54,14 @@ func (s *Service)FindCoin(ctx context.Context,name string)(*domain.Coin,error){
 	return coin,nil
 }
 // Все монеты
-func (s *Service)AllCoin(ctx context.Context)error{
+func (s *Service)AllCoin(ctx context.Context)([]*domain.Coin, error){
 	coins,err:=s.coinRepo.GetAll(ctx)
 	if err !=nil{
-		return err
+		return nil, err
 	}
-	for i:=0;i<len(coins);i++{
-		fmt.Println(coins[i])
-	}
-	return nil
+	return coins, nil
 }
+
 
 // Анализ монеты 
 func (s *Service)AnalysisCoin(ctx context.Context,name string)(*domain.Coin,error){
@@ -78,4 +76,3 @@ func (s *Service)AnalysisCoin(ctx context.Context,name string)(*domain.Coin,erro
 	}
 	return coin,nil 
 }
-
