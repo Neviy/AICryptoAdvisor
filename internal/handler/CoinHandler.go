@@ -62,3 +62,47 @@ func (h *CoinHandler) GetAll(c *gin.Context){
 	}
 	c.JSON(http.StatusOK, coins)	
 }
+
+ //UpdatePrice — обрабатывает запрос обновления цены монеты.
+func (h *CoinHandler) UpdatePrice(c *gin.Context){
+	var coin createCoinRequest
+	if err:=c.ShouldBindJSON(&coin);err !=nil{
+		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
+		return
+	}
+	coinUpdated, err:= h.service.UpdatePrice(c.Request.Context(), coin.Name, coin.Price)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, coinUpdated)
+}
+
+// Find — обрабатывает запрос поиска монеты по имени.
+func (h *CoinHandler) Find(c *gin.Context){
+	name:= c.Query("name")
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "name query parameter is required"})
+		return
+	}
+	coin, err := h.service.FindCoin(c.Request.Context(), name)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, coin)
+}
+
+//Delete — обрабатывает запрос удаления монеты по имени.
+func (h *CoinHandler) Delete(c *gin.Context){
+	name:=c.Query("name")
+	if name== ""{
+		c.JSON(http.StatusBadRequest,gin.H{"error":"name query parameter is required"})
+		return
+	}
+	if err:=h.service.DeleteCoin(c.Request.Context(),name);err!=nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{"message": "coin deleted"})
+}
