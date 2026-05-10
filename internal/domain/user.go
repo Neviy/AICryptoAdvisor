@@ -1,11 +1,21 @@
 package domain
 
 import (
+	"context"
 	"errors"
 	"strings"
 	"time"
 )
 
+// UserRepository - интерфейс для работы с пользователями, который должен реализовать любой репозиторий, работающий с пользователями.
+type UserRepository interface {
+    Save(ctx context.Context, user *User) error
+    FindByEmail(ctx context.Context, email string) (*User, error)
+    Update(ctx context.Context, user *User) error
+    Delete(ctx context.Context, id int64) error
+}
+
+// Ошибки для валидации данных пользователя.
 var (
 	ErrInvalidUsername = errors.New("invalid username")
 	ErrInvalidEmail    = errors.New("invalid email")
@@ -122,4 +132,11 @@ func (u *User) IsAdmin() bool {
 // IsActive — проверка активности
 func (u *User) IsActive() bool {
 	return u.Active
+}
+
+//PromoteToAdmin — выдача роли user.
+func (u *User) PromoteToUser() {
+	now := time.Now()
+	u.Role = "user"
+	u.UpdatedAt = &now
 }
