@@ -1,3 +1,4 @@
+// domain/User- хранится структура User и методы связанные с ним.
 package domain
 
 import (
@@ -26,6 +27,7 @@ var (
 // User — доменная сущность пользователя
 type User struct {
 	ID          int64      `json:"id"`
+	IDCoin      int64      `json:"coin_id"`
 	UserName    string     `json:"username"`
 	Email       string     `json:"email"`
 	Password    string     `json:"-"`
@@ -72,6 +74,7 @@ func NewUserFromDB(
 	role string,
 	active bool,
 	createdAt time.Time,
+	coinID int64,
 	updatedAt *time.Time,
 ) *User {
 
@@ -83,6 +86,7 @@ func NewUserFromDB(
 		Role:      role,
 		Active:    active,
 		CreatedAt: createdAt,
+		IDCoin:    coinID,
 		UpdatedAt: updatedAt,
 	}
 }

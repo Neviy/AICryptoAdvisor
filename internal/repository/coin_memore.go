@@ -1,4 +1,4 @@
-// База данных для хранения информации о монетах
+// repository/coin_memore- База данных для хранения информации о монетах
 package repository
 
 import (
@@ -11,17 +11,19 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// CoinRepository - реализация репозитория для монет в памяти.
 type CoinRepository struct {
 	conn *pgxpool.Pool
 }
 
+// NewCoinRepository - инициализация структуры CoinRepository с переданным соединением к базе данных.
 func NewCoinRepository(conn *pgxpool.Pool)*CoinRepository{
 	return &CoinRepository{
 		conn: conn,
 	}
 }
 
-// Save-Сохранение данных
+// Save-Сохранение данных.
 func (cr *CoinRepository)Save(ctx context.Context,coin *domain.Coin)error{
 	var IdCoin int64
 	query:=`INSERT INTO coins (name, price, percent, recommendation)
@@ -35,7 +37,7 @@ func (cr *CoinRepository)Save(ctx context.Context,coin *domain.Coin)error{
 	return nil
 }
 
-//FindByName-Поиск по имени 
+//FindByName-Поиск по имени. 
 func (cr *CoinRepository)FindByName(ctx context.Context,name string)(*domain.Coin,error){
 	query:=`SELECT coin_id,name,price,percent,recommendation
 	        FROM coins
@@ -56,7 +58,7 @@ func (cr *CoinRepository)FindByName(ctx context.Context,name string)(*domain.Coi
 	return coin,nil
 }
 
-//GetAll-Вывод всех монет 
+//GetAll-Вывод всех монет. 
 func (cr *CoinRepository) GetAll(ctx context.Context) ([]*domain.Coin, error) {
 	query := `SELECT coin_id, name, price, percent, recommendation
 		        FROM coins`
@@ -81,7 +83,7 @@ func (cr *CoinRepository) GetAll(ctx context.Context) ([]*domain.Coin, error) {
 	return coins, nil
 }
 
-//Update-Обновление данных в БД
+//Update-Обновление данных в БД.
 func (cr *CoinRepository)Update(ctx context.Context, coin *domain.Coin)error{
 	if coin.ID==0{
 		return errors.New("coin ID is required")
@@ -99,7 +101,7 @@ func (cr *CoinRepository)Update(ctx context.Context, coin *domain.Coin)error{
 	return nil
 }
 
-//Delete - удаление монеты из БД 
+//Delete - удаление монеты из БД.
 func (cr *CoinRepository)Delete(ctx context.Context, name string)error{
 	if name==""{
 		return errors.New("coin name is required")

@@ -1,4 +1,4 @@
-// Пакет handler обрабатывает HTTP-запросы и передаёт их в service слой.
+// Пакет handler/coinHandler обрабатывает HTTP-запросы, связанные с монетами.
 package handler
 
 import (
