@@ -24,21 +24,21 @@ type AIClient interface {
 
 // Service — сервис для работы с монетами.
 type Service struct {
-	coinRepo CoinRepository
-	aiClient AIClient
+	CoinRepo CoinRepository
+	AiClient AIClient
 }
 
 // NewService — создание сервиса.
 func NewService(repo CoinRepository,ai AIClient,) *Service {
 	return &Service{
-		coinRepo: repo,
-		aiClient: ai,
+		CoinRepo: repo,
+		AiClient: ai,
 	}
 }
 
 // CreateCoin — создание монеты.
 func (s *Service) CreateCoin(ctx context.Context,name string,price float64) (*domain.Coin, error) {
-	existing, err := s.coinRepo.FindByName(ctx, name)
+	existing, err := s.CoinRepo.FindByName(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (s *Service) CreateCoin(ctx context.Context,name string,price float64) (*do
 			err,
 		)
 	}
-	if err := s.coinRepo.Save(ctx, coin); err != nil {
+	if err := s.CoinRepo.Save(ctx, coin); err != nil {
 		return nil, err
 	}
 	return coin, nil
@@ -60,21 +60,21 @@ func (s *Service) CreateCoin(ctx context.Context,name string,price float64) (*do
 
 // FindCoin — поиск монеты.
 func (s *Service) FindCoin(	ctx context.Context,	name string) (*domain.Coin, error) {
-	return s.coinRepo.FindByName(ctx, name)
+	return s.CoinRepo.FindByName(ctx, name)
 }
 // AllCoin — получение всех монет.
 func (s *Service) AllCoin(ctx context.Context,) ([]*domain.Coin, error) {
-	return s.coinRepo.GetAll(ctx)
+	return s.CoinRepo.GetAll(ctx)
 }
 
 // AnalysisCoin — AI анализ монеты.
 func (s *Service) AnalysisCoin(ctx context.Context,name string) (*domain.Coin, error) {
-	coin, err := s.coinRepo.FindByName(ctx, name)
+	coin, err := s.CoinRepo.FindByName(ctx, name)
 	if err != nil {
 		return nil, err
 	}
 	prompt := fmt.Sprintf("Coin %s price is %.2f USDT. Give short BUY, SELL or HOLD recommendation.",coin.Name,	coin.Price,)
-	recommendation, err := s.aiClient.GetAIRecommendation(
+	recommendation, err := s.AiClient.GetAIRecommendation(
 		ctx,
 		prompt,
 	)
@@ -82,7 +82,7 @@ func (s *Service) AnalysisCoin(ctx context.Context,name string) (*domain.Coin, e
 		return nil, err
 	}
 	coin.Recommendation = recommendation
-	if err := s.coinRepo.Update(ctx, coin); err != nil {
+	if err := s.CoinRepo.Update(ctx, coin); err != nil {
 		return nil, err
 	}
 	return coin, nil
@@ -90,14 +90,14 @@ func (s *Service) AnalysisCoin(ctx context.Context,name string) (*domain.Coin, e
 
 // UpdatePrice — обновление цены.
 func (s *Service) UpdatePrice(ctx context.Context,name string,price float64) (*domain.Coin, error) {
-	coin, err := s.coinRepo.FindByName(ctx, name)
+	coin, err := s.CoinRepo.FindByName(ctx, name)
 	if err != nil {
 		return nil, err
 	}
 	if err := coin.UpdatePrice(price); err != nil {
 		return nil, err
 	}
-	if err := s.coinRepo.Update(ctx, coin); err != nil {
+	if err := s.CoinRepo.Update(ctx, coin); err != nil {
 		return nil, err
 	}
 	return coin, nil
@@ -112,5 +112,5 @@ func (s *Service) DeleteCoin(ctx context.Context,name string,) error {
 	if coin == nil {
 		return errors.New("coin not found")
 	}
-	return s.coinRepo.Delete(ctx, name)
+	return s.CoinRepo.Delete(ctx, name)
 }
