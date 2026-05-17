@@ -50,7 +50,6 @@ func (h *UserHandler) Register(c *gin.Context) {
 		})
 		return
 	}
-
 	user, err := h.userService.RegisterUser(
 		c.Request.Context(),
 		req.Username,
