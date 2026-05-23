@@ -13,6 +13,7 @@ type CoinHandler struct {
 	service *service.Service
 }
 
+// createCoinRequest — структура для запроса создания монеты. Содержит имя и цену монеты, оба поля обязательны.
 type createCoinRequest struct {
 	Name string `json:"name" binding:"required"`
 	Price float64 `json:"price" binding:"required,gt=0"`
