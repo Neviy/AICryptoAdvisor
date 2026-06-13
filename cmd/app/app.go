@@ -21,6 +21,7 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+	JWTSecret := os.Getenv("JWT_SECRET")
 	ApiKey := os.Getenv("API_KEY")
 	if ApiKey == "" {
 		return fmt.Errorf("API_KEY is not set in .env file")
